@@ -11,9 +11,7 @@ export const initializePassport = () => {
 
   passport.use(
     "register",
-    new LocalStrategy({ passReqToCallback: true, usernameField:'email' }, async (req, email, password, done) => {
-      console.log(req.body);
-      console.log(req.file);
+    new LocalStrategy({ passReqToCallback: true, usernameField:'email' }, async (req, email, password, done) => {      
       const { first_name, last_name } = req.body;      
       const file = req.file;
       
@@ -47,8 +45,6 @@ export const initializePassport = () => {
     "login",
     new LocalStrategy({usernameField:'email'}, async (email, password, done) => {
       try {        
-        console.log("LOGIN");
-        console.log(email);
         let user = await userSchema.findOne({ email });
         console.log(user)
         if (!user) return done(null, false, { message: "No existe usuario regitrado con ese Email" });

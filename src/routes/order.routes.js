@@ -7,6 +7,7 @@ const orderRouter = Router();
 
 orderRouter 
   .get('/:id', auth, orderController.getById)
+  .get("/:id", auth, orderController.getById)
   .post('/:idCart', auth, orderController.create)
 
 export default orderRouter;

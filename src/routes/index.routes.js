@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { auth } from "../middleware/middlewares.js";
+import contenedorProductos from "../controllers/contenedorProductos.js";
 
 const indexRouter = Router();
 
@@ -35,9 +36,7 @@ let info = {
   };
   
 
-indexRouter.get("/", auth, async (req, res) => {
-    res.render("pages/home", { userLogin: req.user.email });
-});
+indexRouter.get("/", auth, contenedorProductos.getAll);
 
 // Entrega con Process
 indexRouter.get("/info", (req, res) => {    

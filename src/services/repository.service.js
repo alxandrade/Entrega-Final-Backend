@@ -24,6 +24,14 @@ export default class Repository {
       return this.dao.deleteProductInCart(id, data, this.model);
     };
   
+    incrementProductCart = async (id, data) => {
+      return this.dao.incrementProductCart(id, data, this.model);
+    };
+  
+    decrementProductCart = async (id, data) => {
+      return this.dao.decrementProductCart(id, data, this.model);
+    };
+    
     delete = async (params) => {
       return this.dao.delete(params, this.model);
     };

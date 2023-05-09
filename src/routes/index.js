@@ -5,6 +5,6 @@ import carritoRoutes from "./carrito.routes.js";
 const apiRouter = Router();
 
 apiRouter.use("/productos", productoRoutes);
-apiRouter.use("/carritos", carritoRoutes);
+apiRouter.use("/carrito", carritoRoutes);
 
 export default apiRouter;

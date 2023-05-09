@@ -72,8 +72,17 @@ export default class ModelsMongoDAO {
       try {
         let list = [];
         const dataObj = await this.models[entity].findOne({ _id: id }).lean();
+        const product = await this.models[entity].findOne({ _id: id, "products._id": document._id });
+        if (product) {
+          let quantity = product.products[0].cantidad + 1;
+          return await this.models[entity].updateOne(
+            { _id: id },
+            { $set: { "products.$[elemX].cantidad": quantity } },
+            { arrayFilters: [{ "elemX._id": document._id }] }
+          );
+        }
         list.push(...dataObj.products);
-        list.push(document);
+        list.push({ ...document, cantidad: 1 });
         return this.models[entity].updateOne({ _id: id }, { products: list });
       } catch (error) {
         console.log(error);
@@ -81,13 +90,43 @@ export default class ModelsMongoDAO {
     }
   };
 
+  incrementProductCart = async (id, document, entity) => {
+    const product = await this.models[entity].findOne({ _id: id, "products._id": document._id });
+    if (product) {
+      let quantity = product.products[0].cantidad + 1;
+      return await this.models[entity].updateOne(
+        { _id: id },
+        { $set: { "products.$[elemX].cantidad": quantity } },
+        { arrayFilters: [{ "elemX._id": document._id }] }
+      );
+    }
+  };
+
+  decrementProductCart = async (id, document, entity) => {
+    const product = await this.models[entity].findOne({ _id: id, "products._id": document._id });
+    if (product) {
+      let quantity = product.products[0].cantidad - 1;
+      if (quantity === 0) {
+        return await this.models[entity].updateOne({ _id: id }, { $pull: { products: { _id: document._id } } });
+      }
+      return await this.models[entity].updateOne(
+        { _id: id },
+        { $set: { "products.$[elemX].cantidad": quantity } },
+        { arrayFilters: [{ "elemX._id": document._id }] }
+      );
+    }
+  };
+
+
   deleteProductInCart = async (id_cart, id_prod, entity) => {
     try {
       let list = [];
       let newList = [];
+      console.log("DELETE")
       const dataObj = await this.models[entity].findOne({ _id: id_cart }).lean();
       list.push(...dataObj.products);
       for (let i = 0; i <= list.length - 1; i++) {
+        console.log(list[i]._id.toString())
         if (list[i]._id.toString() != id_prod) {
           newList.push(list[i]);
         }

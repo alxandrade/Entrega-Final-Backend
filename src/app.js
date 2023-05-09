@@ -69,7 +69,7 @@ app.use("/", indexRouter);
 app.use('/api/auth',viewsRouter);
 app.use('/api/auth',userRouter);
 
-// Para Productos y Carritos
+// Para Productos y Carrito
 app.use("/api",serverRoutes);
 
 // Para numeros Randoms

@@ -1,3 +1,3 @@
-# Mejora Arquitectura de API
+# Entrega Final Proyecto Backend
 
-Reconfiguraciones en rutas, modelos, controladores y daos
+Entrega final del Proyecto de Backend simulando una tienda en linea.
