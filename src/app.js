@@ -4,19 +4,18 @@ import os from 'os';
 import cors from "cors";
 import msgFlash from "connect-flash";
 import http from "http";
-import serverRoutes from "./routes/index.js";
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
-import viewsRouter from './routes/views.routes.js';
 import userRouter from './routes/auth/sessions.routes.js';
 import { initializePassport } from "./strategies/passport.strategy.js";
 import passport from "passport";
 import indexRouter from "./routes/index.routes.js";
-import randomsRouter from "./routes/yargs/randoms.routes.js";
 import compression from 'express-compression';
-import { addLogger } from "./middleware/logger.js";
+import { addLogger } from "./middleware/logger.middleware.js";
+import productsRouter from "./routes/producto.routes.js";
+import cartRouter from "./routes/carrito.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import orderRouter from "./routes/order.routes.js";
 import dotenv from 'dotenv'
@@ -62,24 +61,27 @@ app.set('views', `${__dirname}/views`);
 app.set('view engine','hbs');
 
 
-// Routes
-app.use("/", indexRouter);
-
 // Metodo GET para Loggeo
-app.use('/api/auth',viewsRouter);
 app.use('/api/auth',userRouter);
 
 // Para Productos y Carrito
-app.use("/api",serverRoutes);
-
-// Para numeros Randoms
-app.use("/api/randoms", randomsRouter);
+app.use("/api/productos", productsRouter);
+app.use("/api/carrito", cartRouter);
 
 // Para ver el Profile de quien esta conectado 
 app.use("/api/profile", profileRouter);
 
+app.use("/", indexRouter);
+
 // Para las Ordenes de Compra
 app.use("/api/order", orderRouter);
+
+app.use((req, res) => {
+    console.log(`ruta ${req.baseUrl} ${req.url} metodo ${req.method} no implementada`);
+    res
+      .status(404)
+      .render("pages/404", { error: `ruta ${req.baseUrl}${req.url} metodo ${req.method} no implementada` });
+  });
 
 /*if(cluster.isPrimary){
     console.log(`Proceso primario (o padre) en PID: ${process.pid}. Generando procesos Hijos`)

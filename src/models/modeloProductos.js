@@ -2,20 +2,20 @@ import mongoose from "mongoose";
 
 let schema = mongoose.Schema;
 
-export default class Product {
+export default class Productos {
 
   static get model() {
-    return "productos"
+    return 'productos'
   }
 
-  static get shema (){
+  static get schema (){
     return {
-      codigo: { type: String, require: true},
-      descripcion: { type: String, require: true},
-      precio: { type: Number, require: true},
-      stock: { type: Number, require: true},
-      foto: { type: String, require: true },
-    }
+      codigo: { type: String, required: true},
+      descripcion: { type: String, required: true},
+      precio: { type: Number, required: true},
+      stock: { type: Number, required: true},
+      foto: { type: String, required: true },
+    };
   }
 }
 

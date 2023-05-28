@@ -10,7 +10,7 @@ export default class Cart {
   static get schema() {
     return{
       email: { type: String, require: true },
-      firts_name: String,
+      first_name: String,
       products: { type: Array, require: false },
     };
   }

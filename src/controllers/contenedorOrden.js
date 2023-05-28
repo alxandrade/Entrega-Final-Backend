@@ -1,6 +1,7 @@
 import { orderEmail } from "../utils/nodemailer.js";
 import { orderService } from "../services/index.service.js";
 import { cartService } from "../services/index.service.js";
+import loggerApp from '../utils/logger.utils.js'
 
 const getAll = (req, res) => {};
 
@@ -9,7 +10,7 @@ const getById = async (req, res) => {
     const order = await orderService.getById(req.params.id)
     res.render("pages/checkout", { order });
   } catch (error) {
-    console.log (error)    
+    loggerApp.error (error)    
   }
 };
 

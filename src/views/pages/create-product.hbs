@@ -1,0 +1,38 @@
+{{>navbar}}
+<div class="container w-50 mt-2 p-4 align-items-center">
+    <h1 class="text-light text-center mb-3 p-4">Agregar Productos Nuevos</h1>
+    <div class="d-flex flex-column align-items-center">
+        <div>
+            {{#if productos}}
+                <div class="text-center">
+                    <h1 class="text-light">Producto Agregado</h1>
+                    <h5 class="text-success">Exitosamente</h5>
+                </div>
+            {{else}}
+            <form action="/api/productos/" method="POST" >
+                <div class="form-floating mb-3">
+                    <input type="text" name="codigo" class="form-control" id="floatingInput" placeholder="Código del producto" required> 
+                    <label for="floatingInput">Código</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" name="descripcion" class="form-control" id="floatingInput" placeholder="Breve descripcion" required> 
+                    <label for="floatingInput">Descripcion</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" name="precio" step="0.1" class="form-control" id="floatingInput" placeholder="$ (Valor del producto)" required> 
+                    <label for="floatingInput">Precio</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="number" name="stock" class="form-control" id="floatingInput" placeholder="Stock en inventario" required> 
+                    <label for="floatingInput">Stock</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" name="foto" class="form-control" id="floatingInput" placeholder="Elegi tu foto"> 
+                    <label for="floatingInput">Link de la imagen</label>
+                </div>
+                <button type="submit" class="btn btn-warning mt-3 container">Guardar Producto</button>
+            </form>
+           {{/if}}
+        </div>
+    </div>
+</div>

@@ -1,11 +1,12 @@
 import { productService } from "../services/index.service.js";
+import loggerApp from '../utils/logger.utils.js'
 
 const getAll = async (req, res) => {
   try {
     const products = await productService.get();
     res.render("pages/home", { userLogin: req.user.email, products, idCart: req.user.cart_id });
   } catch (error) {
-    console.log(error);
+    loggerApp.error (error);
   }
 };
 
@@ -15,10 +16,23 @@ const getById = async (req, res) => {
   res.send(result);
 };
 
+const renderCreate = async (req, res) => {
+  res.render("pages/create-product");
+};
+
 const create = async (req, res) => {
-  let { name, price, thumbnail } = req.body;
-  let result = await productService.save({ name, price, thumbnail });
-  res.send(result);
+  let { codigo, descripcion, precio, stock, foto } = req.body;
+   
+  try {    
+    if ((!codigo, !descripcion, !foto)) return res.status(400).send({ message: "Todos los campos son requeridos" });
+    let obj = req.body;    
+    let productos = await productService.saveProducto(obj);
+    res.status(201);
+    res.render("pages/create-product", { productos: productos });    
+    } catch (error) {
+      res.status(400).send(error);
+      loggerApp.error(error.message);    
+  } 
 };
 
 const deleteById = async (req, res) => {
@@ -36,5 +50,5 @@ const updateById = async (req, res) => {
   res.send(result);
 };
 
-export default { getAll, getById, create, deleteById, deleteAll, updateById };
+export default { getAll, getById, renderCreate, create, deleteById, deleteAll, updateById };
 

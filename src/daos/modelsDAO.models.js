@@ -1,32 +1,32 @@
+import loggerApp from "../utils/logger.utils.js";
 import mongoose from "mongoose";
 import User from "../models/modeloUser.js";
-import Product from "../models/modeloProductos.js";
+import Productos from "../models/modeloProductos.js";
 import Cart from "../models/modeloCarritos.js";
 import Order from "../models/modeloOrden.js";
 
 mongoose.set("strictQuery", false);
 
 export default class ModelsMongoDAO {
-  constructor(config) {
-    
+  constructor(config) {    
     this.mongoose = mongoose
       .connect(config, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       })
       .catch((error) => {
-        console.log(error)
+        loggerApp.error(error);
         process.exit();
       });
 
     const userSchema = mongoose.Schema(User.schema);
-    const productSchema = mongoose.Schema(Product.schema);
+    const productSchema = mongoose.Schema(Productos.schema);
     const cartSchema = mongoose.Schema(Cart.schema);
     const orderSchema = mongoose.Schema(Order.schema);
 
     this.models = {
       [User.model]: mongoose.model(User.model, userSchema),
-      [Product.model]: mongoose.model(Product.model, productSchema),
+      [Productos.model]: mongoose.model(Productos.model, productSchema),
       [Cart.model]: mongoose.model(Cart.model, cartSchema),
       [Order.model]: mongoose.model(Order.model, orderSchema),
     };
@@ -43,10 +43,19 @@ export default class ModelsMongoDAO {
     return result;
   };
 
-  create = async (document, entity) => {
+  create = async (document, entity) => {    
     let results = await this.models[entity].create(document);
     return results;
   };
+
+  saveProducto = async (document, entity) => {        
+    try{
+      const results = await this.models[entity].create(document);            
+      return results;
+    }catch(error){
+      loggerApp.error(error);
+    }
+  }
 
   delete = async (params, entity) => {
     let result = await this.models[entity].deleteOne({ _id: params });
@@ -63,7 +72,7 @@ export default class ModelsMongoDAO {
       await this.models[entity].findByIdAndUpdate(id_cart, { products: [] });
       return;
     } catch (error) {
-      console.log(error);
+      loggerApp.error(error);
     }
   };
 
@@ -85,33 +94,35 @@ export default class ModelsMongoDAO {
         list.push({ ...document, cantidad: 1 });
         return this.models[entity].updateOne({ _id: id }, { products: list });
       } catch (error) {
-        console.log(error);
+        loggerApp.error(error);
       }
     }
   };
 
-  incrementProductCart = async (id, document, entity) => {
-    const product = await this.models[entity].findOne({ _id: id, "products._id": document._id });
-    if (product) {
-      let quantity = product.products[0].cantidad + 1;
+  incrementProductCart = async (id, document, entity) => {    
+    const cart = await this.models[entity].findOne({ _id: id }).populate('products');       
+    const product = cart.products.find(product => product._id.toString() === document._id.toString());
+    if (product) {            
+      let cantidad = product.cantidad + 1;
       return await this.models[entity].updateOne(
         { _id: id },
-        { $set: { "products.$[elemX].cantidad": quantity } },
+        { $set: { "products.$[elemX].cantidad": cantidad } },
         { arrayFilters: [{ "elemX._id": document._id }] }
       );
     }
   };
 
   decrementProductCart = async (id, document, entity) => {
-    const product = await this.models[entity].findOne({ _id: id, "products._id": document._id });
-    if (product) {
-      let quantity = product.products[0].cantidad - 1;
-      if (quantity === 0) {
+    const cart = await this.models[entity].findOne({ _id: id }).populate('products');       
+    const product = cart.products.find(product => product._id.toString() === document._id.toString());
+    if (product) {      
+      let cantidad = product.cantidad - 1;
+      if (cantidad === 0) {
         return await this.models[entity].updateOne({ _id: id }, { $pull: { products: { _id: document._id } } });
       }
       return await this.models[entity].updateOne(
         { _id: id },
-        { $set: { "products.$[elemX].cantidad": quantity } },
+        { $set: { "products.$[elemX].cantidad": cantidad } },
         { arrayFilters: [{ "elemX._id": document._id }] }
       );
     }
@@ -133,7 +144,7 @@ export default class ModelsMongoDAO {
       }
       return this.models[entity].updateOne({ _id: id_cart }, { products: newList });
     } catch (error) {
-      console.log(error);
+      loggerApp.error(error);
     }
   };
 
@@ -147,7 +158,7 @@ export default class ModelsMongoDAO {
       });
       return order;
     } catch (error) {
-      console.log(error);
+      loggerApp.error(error);
     }
   };
 }

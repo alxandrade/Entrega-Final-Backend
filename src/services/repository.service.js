@@ -15,6 +15,11 @@ export default class Repository {
     save = async (data) => {
       return this.dao.create(data, this.model);
     };
+
+    saveProducto = async (data) => {
+      return this.dao.saveProducto(data, this.model);
+    };
+    
   
     saveProductInCart = async (id, data) => {
       return this.dao.createProductInCart(id, data, this.model);

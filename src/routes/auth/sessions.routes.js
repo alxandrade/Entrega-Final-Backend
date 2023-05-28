@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { msgFlash } from "../../middleware/middlewares.js";
-import { addLogger } from "../../middleware/logger.js";
+import { addLogger } from "../../middleware/logger.middleware.js";
 import uploader from "../../middleware/multer.middleware.js"
 import usersController from "../../controllers/contenedorUser.js"
 
